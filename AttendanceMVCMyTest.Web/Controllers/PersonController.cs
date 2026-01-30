@@ -65,8 +65,17 @@ namespace AttendanceMVCMyTest.Web.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var person = await _personService.GetPersonByIdAsync(id);
+            if (person == null) return HttpNotFound();
+            return View(person); // View con messaggio "Sei sicuro?"
+        }
+
         [HttpPost]
-        public async Task<ActionResult> Delete(int id)  //  /Person/Delete/5
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> DeleteConfirmed(int id)  //  /Person/Delete/5
         {
             await _personService.DeletePersonCascadeAsync(id);
             return RedirectToAction(nameof(Index));

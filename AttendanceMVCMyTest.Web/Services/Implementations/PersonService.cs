@@ -26,16 +26,27 @@ namespace AttendanceMVCMyTest.Web.Services.Implementations
                     }).ToListAsync();  //ok
             }
         }
-        public async Task<IList<PersonViewModel>> GetPersonsByDay(int dayId)
+
+        public async Task<IList<PersonAttendanceViewModel>> GetPersonsByDay(int dayId)
         {
             using (var db = new AttendanceDbContext())
             {
                 db.Database.Log = msg => Console.WriteLine(msg);
                 //return await db.Person 
-
+                return await db.Person
+                    .Select(p => new PersonAttendanceViewModel
+                    {
+                        PersonId = p.PersonId,
+                        FirstName = p.FirstName,
+                        LastName = p.LastName,
+                        IsAvailable = p.Attendance
+                    .Where(a => a.DayId == dayId)
+                    .Select(a => (bool?)a.IsAvailable)
+                    .FirstOrDefault()
+                    })
+                    .ToListAsync();
             }
         }
-
 
         public async Task<PersonViewModel> GetPersonByIdAsync(int personId) {
             using (var db = new AttendanceDbContext()) {
@@ -54,11 +65,13 @@ namespace AttendanceMVCMyTest.Web.Services.Implementations
         public async Task<int> AddPersonWithAttendanceAsync(CreatePersonAttendanceViewModel model) {
             using (var db = new AttendanceDbContext()) { 
                 db.Database.Log = msg => Console.WriteLine(msg);
-
+                //trovo existing day(se esiste)
                 var day = await db.Day
                     .FirstOrDefaultAsync(d => d.DayId == model.dayId);
                 if (day == null) throw new Exception("day not found");
+                //creo nuova person
                 var person = new Person { FirstName = model.FirstName, LastName = model.LastName };
+                //creo nuova attendance
                 var attendance = new Attendance { IsAvailable = model.isAvaible, Day = day, Person = person };
                 db.Person.Add(person);  //ok
                 await db.SaveChangesAsync();
