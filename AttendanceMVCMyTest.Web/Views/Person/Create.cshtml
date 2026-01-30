@@ -1,0 +1,36 @@
+﻿@model AttendanceMVCMyTest.Web.Models.ViewModels.Person.CreatePersonAttendanceViewModel
+
+@{
+    ViewBag.Title = "Create Person";
+}
+
+<h2>Create Person</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.FirstName)
+        @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(m => m.LastName)
+        @Html.TextBoxFor(m => m.LastName, new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
+        @Html.Label("Day")
+        @Html.TextBoxFor(m => m.dayId, new { @class = "form-control" })
+    </div>
+
+    <div class="checkbox">
+        <label>
+            @Html.CheckBoxFor(m => m.isAvaible) Available
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-success">Save</button>
+    @Html.ActionLink("Back", "Index", null, new { @class = "btn btn-default" })
+}

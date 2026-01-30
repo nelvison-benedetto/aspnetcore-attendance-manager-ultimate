@@ -1,0 +1,48 @@
+﻿@model IEnumerable<AttendanceMVCMyTest.Web.Models.ViewModels.Attendance.AttendancePersonRowViewModel>
+
+@{
+    ViewBag.Title = "Attendance";
+    var dayId = ViewBag.DayId;
+}
+
+<h2>Attendance – Day @dayId</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Available</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            <tr>
+                <td>@p.FirstName @p.LastName</td>
+                <td>
+                    @(p.isAvailable.HasValue
+                    ? (p.isAvailable.Value ? "Yes" : "No")
+                    : "—")
+                </td>
+                <td>
+                    @using (Html.BeginForm("Update", "Attendance", FormMethod.Post))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("PersonId", p.PersonId)
+                        @Html.Hidden("DayId", dayId)
+
+                        <input type="hidden" name="IsAvailable"
+                               value="@(p.isAvailable != true)" />
+
+                        <button type="submit" class="btn btn-sm btn-info">
+                            Toggle
+                        </button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@Html.ActionLink("Back to Persons", "Index", "Person")

@@ -1,0 +1,22 @@
+﻿@model AttendanceMVCMyTest.Web.Models.ViewModels.Person.PersonViewModel
+
+@{
+    ViewBag.Title = "Delete Person";
+}
+
+<h2>Delete Person</h2>
+
+<h4>Are you sure you want to delete this person?</h4>
+
+<div>
+    <strong>@Model.FirstName @Model.LastName</strong>
+</div>
+
+@using (Html.BeginForm("Delete", "Person", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.PersonId)
+
+    <button type="submit" class="btn btn-danger">Delete</button>
+    @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-default" })
+}
